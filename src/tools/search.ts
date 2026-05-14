@@ -27,6 +27,8 @@ Filters:
         branch: z.string().optional().describe("Branch filter"),
         author: z.string().optional().describe("Author name filter"),
         date: z.enum(["week", "month", "all"]).optional().describe("Time window filter"),
+        limit: z.number().int().positive().optional().describe("Max results per page (default 25)"),
+        page: z.number().int().positive().optional().describe("Page number, 1-based (default 1)"),
         repo_dir: RepoDirSchema,
       }),
       annotations: {
@@ -36,13 +38,15 @@ Filters:
         openWorldHint: true,
       },
     },
-    async ({ query, repo, branch, author, date, repo_dir }) => {
+    async ({ query, repo, branch, author, date, limit, page, repo_dir }) => {
       try {
-        const args = ["search", query];
+        const args = ["search", query, "--json"];
         if (repo) args.push("--repo", repo);
         if (branch) args.push("--branch", branch);
         if (author) args.push("--author", author);
         if (date) args.push("--date", date);
+        if (limit !== undefined) args.push("--limit", String(limit));
+        if (page !== undefined) args.push("--page", String(page));
 
         const { stdout } = await runEntire(args, { cwd: repoPath(repo_dir) });
         return {

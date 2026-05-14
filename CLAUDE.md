@@ -1,6 +1,6 @@
 # CLAUDE.md — JurisLM Entire MCP Server
 
-Entire CLI 的 MCP wrapper，提供 16 個工具用於管理 AI agent checkpoints 和 sessions。
+Entire CLI 的 MCP wrapper，提供 19 個工具用於管理 AI agent checkpoints 和 sessions。
 
 ## 常用命令
 
@@ -36,12 +36,12 @@ src/
 └── tools/
     ├── checkpoint.ts  # 4 個 checkpoint 工具
     ├── explain.ts     # 2 個 explain 工具（commit / checkpoint with flags）
-    ├── search.ts      # 1 個 search 工具
-    ├── session.ts     # 2 個 session 工具
-    └── misc.ts        # 7 個其他工具（version、status、recap、doctor、resume、attach、labs review）
+    ├── search.ts      # 1 個 search 工具（--json 強制輸出，避免 TUI）
+    ├── session.ts     # 3 個 session 工具
+    └── misc.ts        # 9 個其他工具（version、status、recap、doctor、resume、attach、labs review、dispatch、activity）
 ```
 
-## 工具清單（16 個）
+## 工具清單（19 個）
 
 ### Checkpoint（4 tools）
 - `entire_checkpoint_list` — 列出所有 checkpoints（可靠，本地讀取）
@@ -54,13 +54,14 @@ src/
 - `entire_explain_checkpoint` — 取得 checkpoint transcript，支援 mode: default/full/raw
 
 ### Search（1 tool）
-- `entire_search` — 搜尋 checkpoints，支援 --repo/--branch/--author/--date 篩選
+- `entire_search` — 搜尋 checkpoints，支援 --repo/--branch/--author/--date/--limit/--page 篩選；**強制 --json**（TUI 在非互動式環境無法使用）
 
-### Session（2 tools）
+### Session（3 tools）
 - `entire_session_list` — 列出所有 sessions（可靠，本地讀取）
+- `entire_session_current` — 取得當前 worktree 的 active session JSON（session-to-skill 工作流程核心）
 - `entire_session_info` — 查看特定 session 詳情
 
-### Misc（7 tools）
+### Misc（9 tools）
 - `entire_version` — 確認 CLI 已安裝及版本
 - `entire_status` — 取得當前 active session ID（session-handoff 工作流程核心）
 - `entire_recap` — 生成當前 session 工作摘要
@@ -68,6 +69,8 @@ src/
 - `entire_resume` — 切換到 branch 並恢復 session metadata
 - `entire_attach` — 將未追蹤的 session 加入 Entire checkpoint 系統
 - `entire_labs_review` — 實驗性 code review（preview，可能不穩定）
+- `entire_dispatch` — 生成近期 agent 工作摘要（支援 cloud/local 模式）
+- `entire_activity` — 顯示活動概覽和 repo breakdown
 
 ## 環境變數
 

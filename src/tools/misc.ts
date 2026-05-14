@@ -9,6 +9,89 @@ const RepoDirSchema = z
 
 export function registerMiscTools(server: McpServer): void {
   server.registerTool(
+    "entire_dispatch",
+    {
+      title: "Dispatch",
+      description: `Generate a dispatch summarizing recent agent work.
+Uses \`entire dispatch\`.
+
+Supports cloud mode (default) or local mode with --local flag.
+Cloud mode requires authentication via \`entire login\`.`,
+      inputSchema: z.object({
+        local: z.boolean().optional().describe("Generate via local agent CLI instead of Entire server"),
+        repos: z.array(z.string()).optional().describe("Cloud repo slugs to include, up to 5 (e.g. ['jurislm/entire'])"),
+        since: z.string().optional().describe("Time window (Go duration, relative time, or ISO date, default '7d')"),
+        until: z.string().optional().describe("Window end time (defaults to now)"),
+        voice: z.string().optional().describe("Voice preset name or literal description"),
+        all_branches: z.boolean().optional().describe("Include every existing local branch (--local only)"),
+        repo_dir: RepoDirSchema,
+      }),
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
+    async ({ local, repos, since, until, voice, all_branches, repo_dir }) => {
+      try {
+        const args = ["dispatch"];
+        if (local) args.push("--local");
+        if (repos && repos.length > 0) args.push("--repos", repos.join(","));
+        if (since) args.push("--since", since);
+        if (until) args.push("--until", until);
+        if (voice) args.push("--voice", voice);
+        if (all_branches) args.push("--all-branches");
+        const { stdout } = await runEntire(args, {
+          cwd: repoPath(repo_dir),
+          timeout: 120_000,
+        });
+        return {
+          content: [{ type: "text", text: stdout || "No dispatch generated." }],
+        };
+      } catch (error: unknown) {
+        return {
+          content: [{ type: "text", text: String(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  server.registerTool(
+    "entire_activity",
+    {
+      title: "Activity",
+      description: `Display your activity overview, repository breakdown, and recent commits.
+Uses \`entire activity\`. Requires authentication via \`entire login\`.`,
+      inputSchema: z.object({
+        repo_dir: RepoDirSchema,
+      }),
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
+    async ({ repo_dir }) => {
+      try {
+        const { stdout } = await runEntire(["activity"], {
+          cwd: repoPath(repo_dir),
+        });
+        return {
+          content: [{ type: "text", text: stdout || "No activity data." }],
+        };
+      } catch (error: unknown) {
+        return {
+          content: [{ type: "text", text: String(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  server.registerTool(
     "entire_version",
     {
       title: "Version",

@@ -42,6 +42,42 @@ Uses \`entire session list\` — reliable local read.`,
   );
 
   server.registerTool(
+    "entire_session_current",
+    {
+      title: "Current Session",
+      description: `Show the active session for the current worktree.
+Uses \`entire session current --json\`.
+
+Returns JSON with session_id, agent_type, transcript_path, and metadata.
+Used by the session-to-skill workflow to read the current session's context.`,
+      inputSchema: z.object({
+        repo_dir: RepoDirSchema,
+      }),
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ repo_dir }) => {
+      try {
+        const { stdout } = await runEntire(["session", "current", "--json"], {
+          cwd: repoPath(repo_dir),
+        });
+        return {
+          content: [{ type: "text", text: stdout || "No active session in current worktree." }],
+        };
+      } catch (error: unknown) {
+        return {
+          content: [{ type: "text", text: String(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  server.registerTool(
     "entire_session_info",
     {
       title: "Get Session Info",

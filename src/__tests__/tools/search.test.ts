@@ -38,6 +38,39 @@ describe("entire_search", () => {
     );
   });
 
+  it("always passes --json for machine-readable output in non-interactive MCP context", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "{}", stderr: "" });
+    const server = makeServer();
+    registerSearchTools(server);
+    await server.callTool("entire_search", { query: "auth" });
+    expect(runEntire).toHaveBeenCalledWith(
+      expect.arrayContaining(["--json"]),
+      expect.any(Object)
+    );
+  });
+
+  it("appends --limit when provided", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "{}", stderr: "" });
+    const server = makeServer();
+    registerSearchTools(server);
+    await server.callTool("entire_search", { query: "auth", limit: 10 });
+    expect(runEntire).toHaveBeenCalledWith(
+      expect.arrayContaining(["--limit", "10"]),
+      expect.any(Object)
+    );
+  });
+
+  it("appends --page when provided", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "{}", stderr: "" });
+    const server = makeServer();
+    registerSearchTools(server);
+    await server.callTool("entire_search", { query: "auth", page: 2 });
+    expect(runEntire).toHaveBeenCalledWith(
+      expect.arrayContaining(["--page", "2"]),
+      expect.any(Object)
+    );
+  });
+
   it("appends --repo when provided", async () => {
     vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "1 result\n", stderr: "" });
     const server = makeServer();

@@ -60,6 +60,87 @@ describe("entire_version", () => {
   });
 });
 
+describe("entire_dispatch", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("calls `entire dispatch` with no args by default", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "dispatch output\n", stderr: "" });
+    const server = makeServer();
+    registerMiscTools(server);
+    await server.callTool("entire_dispatch", {});
+    expect(runEntire).toHaveBeenCalledWith(["dispatch"], expect.any(Object));
+  });
+
+  it("appends --local when local is true", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "local dispatch\n", stderr: "" });
+    const server = makeServer();
+    registerMiscTools(server);
+    await server.callTool("entire_dispatch", { local: true });
+    expect(runEntire).toHaveBeenCalledWith(
+      expect.arrayContaining(["--local"]),
+      expect.any(Object)
+    );
+  });
+
+  it("appends --repos when provided", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "repo dispatch\n", stderr: "" });
+    const server = makeServer();
+    registerMiscTools(server);
+    await server.callTool("entire_dispatch", { repos: ["jurislm/entire", "jurislm/mcp"] });
+    expect(runEntire).toHaveBeenCalledWith(
+      expect.arrayContaining(["--repos", "jurislm/entire,jurislm/mcp"]),
+      expect.any(Object)
+    );
+  });
+
+  it("appends --since when provided", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "dispatch\n", stderr: "" });
+    const server = makeServer();
+    registerMiscTools(server);
+    await server.callTool("entire_dispatch", { since: "3d" });
+    expect(runEntire).toHaveBeenCalledWith(
+      expect.arrayContaining(["--since", "3d"]),
+      expect.any(Object)
+    );
+  });
+
+  it("returns isError on CLI failure", async () => {
+    vi.mocked(runEntire).mockRejectedValueOnce(new Error("auth required"));
+    const server = makeServer();
+    registerMiscTools(server);
+    const result = await server.callTool("entire_dispatch", {}) as { isError: boolean };
+    expect(result.isError).toBe(true);
+  });
+});
+
+describe("entire_activity", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("calls `entire activity`", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "activity data\n", stderr: "" });
+    const server = makeServer();
+    registerMiscTools(server);
+    await server.callTool("entire_activity", {});
+    expect(runEntire).toHaveBeenCalledWith(["activity"], { cwd: undefined });
+  });
+
+  it("passes repo_dir to cwd", async () => {
+    vi.mocked(runEntire).mockResolvedValueOnce({ stdout: "data\n", stderr: "" });
+    const server = makeServer();
+    registerMiscTools(server);
+    await server.callTool("entire_activity", { repo_dir: "/my/repo" });
+    expect(runEntire).toHaveBeenCalledWith(["activity"], { cwd: "/my/repo" });
+  });
+
+  it("returns isError on CLI failure", async () => {
+    vi.mocked(runEntire).mockRejectedValueOnce(new Error("auth required"));
+    const server = makeServer();
+    registerMiscTools(server);
+    const result = await server.callTool("entire_activity", {}) as { isError: boolean };
+    expect(result.isError).toBe(true);
+  });
+});
+
 describe("entire_status", () => {
   beforeEach(() => vi.clearAllMocks());
 
