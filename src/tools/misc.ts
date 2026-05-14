@@ -9,6 +9,68 @@ const RepoDirSchema = z
 
 export function registerMiscTools(server: McpServer): void {
   server.registerTool(
+    "entire_version",
+    {
+      title: "Version",
+      description: `Check the installed Entire CLI version.
+Uses \`entire version\`. Run this first to verify the CLI is installed.`,
+      inputSchema: z.object({
+        repo_dir: RepoDirSchema,
+      }),
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ repo_dir }) => {
+      try {
+        const { stdout } = await runEntire(["version"], { cwd: repoPath(repo_dir) });
+        return {
+          content: [{ type: "text", text: stdout || "entire CLI is installed." }],
+        };
+      } catch (error: unknown) {
+        return {
+          content: [{ type: "text", text: String(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  server.registerTool(
+    "entire_status",
+    {
+      title: "Status",
+      description: `Get the active session ID for the current repo.
+Uses \`entire status\`. Returns the session ID needed for session-handoff workflows.`,
+      inputSchema: z.object({
+        repo_dir: RepoDirSchema,
+      }),
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: false,
+      },
+    },
+    async ({ repo_dir }) => {
+      try {
+        const { stdout } = await runEntire(["status"], { cwd: repoPath(repo_dir) });
+        return {
+          content: [{ type: "text", text: stdout || "No active session." }],
+        };
+      } catch (error: unknown) {
+        return {
+          content: [{ type: "text", text: String(error) }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  server.registerTool(
     "entire_recap",
     {
       title: "Session Recap",
