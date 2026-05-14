@@ -4,6 +4,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 import { registerCheckpointTools } from "./tools/checkpoint.js";
+import { registerExplainTools } from "./tools/explain.js";
+import { registerSearchTools } from "./tools/search.js";
 import { registerSessionTools } from "./tools/session.js";
 import { registerMiscTools } from "./tools/misc.js";
 
@@ -13,6 +15,8 @@ const server = new McpServer({
 });
 
 registerCheckpointTools(server);
+registerExplainTools(server);
+registerSearchTools(server);
 registerSessionTools(server);
 registerMiscTools(server);
 
