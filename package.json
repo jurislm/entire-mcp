@@ -1,0 +1,62 @@
+{
+  "name": "@jurislm/entire-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for the Entire CLI — manage AI agent checkpoints and sessions",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "entire-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "start": "bun dist/index.js",
+    "dev": "bun --watch src/index.ts",
+    "build": "tsc",
+    "prepare": "bun run build",
+    "lint": "eslint --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "entire",
+    "checkpoint",
+    "session",
+    "ai-agent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jurislm/entire-mcp.git"
+  },
+  "homepage": "https://github.com/jurislm/entire-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/jurislm/entire-mcp/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.1.0"
+  },
+  "packageManager": "bun@1.3.9",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "zod": "^4.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.0.0",
+    "@vitest/coverage-v8": "^4.1.5",
+    "eslint": "^10.2.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.4.0",
+    "typescript": "^6.0.0",
+    "typescript-eslint": "^8.58.1",
+    "vitest": "^4.1.0"
+  }
+}
