@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/jurislm/entire-mcp/compare/v1.1.0...v1.1.1) (2026-07-08)
+
+
+### Documentation
+
+* add README ([85ca0ac](https://github.com/jurislm/entire-mcp/commit/85ca0accbf2a1af011c85592ddccc744ff592a72))
+* add README ([39f0ccd](https://github.com/jurislm/entire-mcp/commit/39f0ccdcef5f5c0b285c0bc24cbf45bc015775c7))
+
 ## [1.1.0](https://github.com/jurislm/entire-mcp/compare/v1.0.0...v1.1.0) (2026-05-14)
 
 
