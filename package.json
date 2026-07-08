@@ -1,6 +1,6 @@
 {
   "name": "@jurislm/entire-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "MCP server for the Entire CLI — manage AI agent checkpoints and sessions",
   "type": "module",
   "main": "dist/index.js",
